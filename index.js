@@ -11,7 +11,7 @@ const {
 const app = express();
 const upload = multer({ dest: "uploads/" });
 const PORT = 3000;
-const API_KEY = "AIzaSyDRvyVwKtW8_T_lEuZ2UshiS9--d1Y-Ds8"; // 실제 Google Generative AI API 키로 교체하세요
+const API_KEY = " "; // 실제 Google Generative AI API 키로 교체하세요
 const MODEL_NAME = "gemini-1.0-pro-vision-latest";
 
 // 정적 파일 제공 설정 (public 폴더 내의 파일을 자동으로 제공)
