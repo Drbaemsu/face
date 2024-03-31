@@ -7,22 +7,20 @@ const {
   HarmCategory,
   HarmBlockThreshold,
 } = require("@google/generative-ai");
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args)); // node-fetch 추가
 
 const app = express();
 const upload = multer({ dest: "uploads/" });
 const PORT = 3000;
-const API_KEY = "AIzaSyDRvyVwKtW8_T_lEuZ2UshiS9--d1Y-Ds8"; // 실제 Google Generative AI API 키로 교체하세요
+const API_KEY = "AIzaSyDCr6GmP-AbWT4_S8RdubQ4KDQhadrfpXY"; // 실제 Google Generative AI API 키로 교체하세요
 const MODEL_NAME = "gemini-1.0-pro-vision-latest";
 
-// 정적 파일 제공 설정 (public 폴더 내의 파일을 자동으로 제공)
 app.use(express.static("public"));
 
-// 루트 경로에 대한 GET 요청 처리
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// 이미지 분석을 위한 POST 요청 처리
 app.post("/analyze", upload.single("image"), async (req, res) => {
   if (!req.file) {
     return res.status(400).send("No image file uploaded.");
@@ -63,19 +61,11 @@ app.post("/analyze", upload.single("image"), async (req, res) => {
       safetySettings,
     });
 
-    // 만약 result.response.text가 함수라면, 결과를 기다립니다.
-    if (typeof result.response.text === "function") {
-      const textResult = await result.response.text();
-      res.send(textResult);
-    } else {
-      // result.response.text가 이미 문자열이라면, 직접 전송합니다.
-      res.send(result.response.text);
-    }
+    res.send(result.response.text);
   } catch (error) {
     console.error(error);
     res.status(500).send("Error processing the image analysis request.");
   } finally {
-    // 업로드된 이미지 파일 삭제
     fs.unlink(req.file.path, (err) => {
       if (err) throw err;
     });
