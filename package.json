@@ -1,4 +1,10 @@
+
+
 {
+  "scripts": {
+      "start": "node index.js"
+  }
+  
   "name": "nodejs",
   "version": "1.0.0",
   "description": "",
