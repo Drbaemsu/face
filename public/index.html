@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>얼굴 이미지 기반 성격 분석</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 h-screen flex flex-col items-center justify-center">
+    <div class="p-6 max-w-sm bg-white rounded-lg border border-gray-200 shadow-md">
+        <h1 class="text-2xl font-bold mb-4">얼굴 이미지 기반 성격 분석</h1>
+        <form id="uploadForm" enctype="multipart/form-data" class="flex flex-col space-y-4">
+            <input type="file" id="imageInput" name="image" required class="block w-full text-sm text-gray-500
+            file:mr-4 file:py-2 file:px-4
+            file:rounded-full file:border-0
+            file:text-sm file:font-semibold
+            file:bg-violet-50 file:text-violet-700
+            hover:file:bg-violet-100" onchange="previewImage();"/>
+            <div id="imagePreview" class="mt-4"></div>
+            <button type="submit" class="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">분석하기</button>
+        </form>
+    </div>
+    <div id="result" class="mt-6 p-4 max-w-sm bg-white rounded-lg border border-gray-200 shadow-md"></div>
+
+    <script>
+        function previewImage() {
+            var preview = document.getElementById('imagePreview');
+            var file    = document.getElementById('imageInput').files[0];
+            var reader  = new FileReader();
+
+            reader.onloadend = function () {
+                preview.innerHTML = '<img src="' + reader.result + '" class="w-full h-auto rounded">';
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                preview.innerHTML = "";
+            }
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('image', document.getElementById('imageInput').files[0]);
+
+            fetch('/analyze', {
+                method: 'POST',
+                body: formData,
+            }).then(response => response.text())
+            .then(data => {
+                document.getElementById('result').textContent = data;
+                document.getElementById('result').className += " p-4 text-green-700 bg-green-100 rounded-lg";
+            }).catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
